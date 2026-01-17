@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Download, Copy, Check } from "lucide-react";
@@ -15,6 +16,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 
 export default function VerifyPage() {
@@ -28,26 +31,18 @@ export default function VerifyPage() {
     },
   });
 
-  // Mutations
   const mutation = useMutation({
     mutationFn: async (payload: { serialNumber: string }) => {
-      try {
-        const res = await fetch("/api/qr", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      const res = await axios.post("/api/qr", payload);
 
-        if (!res.ok) throw new Error("Failed");
-
-        return res.json();
-      } catch (error) {
-        console.log(error);
-      }
+      return res.data;
     },
     onSuccess: (data) => {
       generateQRCode(data.serialNumber);
       setSerialNumber(data.serialNumber);
+    },
+    onError: (error) => {
+      toast.error("Try again with a different serial number");
     },
   });
 
@@ -81,7 +76,7 @@ export default function VerifyPage() {
   };
 
   async function onSubmit(data: z.infer<typeof qrCodeFormSchema>) {
-    await mutation.mutateAsync(data);
+    mutation.mutate(data);
   }
 
   return (
@@ -148,11 +143,13 @@ export default function VerifyPage() {
                     />
                     {/* Generate Button */}
                     <Button
+                      disabled={mutation.isPending}
                       type="submit"
                       size="lg"
                       className="w-full text-base"
                     >
-                      {serialNumber ? "Generate New QR" : "Generate QR Code"}
+                      {mutation.isPending && <Spinner />}
+                      Generate QR Code
                     </Button>
                   </FieldGroup>
                 </form>

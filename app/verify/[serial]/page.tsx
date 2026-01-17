@@ -80,7 +80,7 @@ export default function VerificationResultPage() {
           </div>
 
           {/* Failed Verification Info */}
-          {error && (
+          {error && !isLoading && (
             <div className="bg-card rounded-2xl border border-border p-8 space-y-6">
               <div className="space-y-4">
                 <h3 className="text-2xl font-bold">Serial Number Not Found</h3>

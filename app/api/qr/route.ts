@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   if (existingQr) {
     return NextResponse.json(
-      { error: "Qr already exists for this serial number" },
+      { message: "Qr already exists for this serial number" },
       { status: 400 }
     );
   }
