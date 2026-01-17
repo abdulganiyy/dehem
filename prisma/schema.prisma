@@ -6,11 +6,11 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "./generated"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 

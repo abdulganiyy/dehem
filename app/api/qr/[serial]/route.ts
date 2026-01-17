@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 type Params = {
-  params: { serial: string };
+  params: Promise<{ serial: string }>;
 };
 
 export async function GET(_req: Request, { params }: Params) {
